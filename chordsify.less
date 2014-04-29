@@ -8,45 +8,80 @@
 @lyricsFontPrint: "Times New Roman", Times, serif;
 @chordFontPrint: "Helvetica Neue", Helvetica, Arial, sans-serif;
 
+body {
+	font-family: Arial;
+	transition: all 1s;
+	@media only screen and (min-width: 5px) {
+		font-size: 16px;
+	}
+}
+
+.chordsify {
+	padding-top: 1em;
+}
+
 .chordsify-raw {
 	white-space: pre;
 	white-space: pre-line;
 }
 
-.chordsify-chords-hidden {
-	.chordsify-chord {
-		display: none;
-	}
+.chordsify-block {
+	line-height: 2.5em;
+}
+
+.chordsify-chord-anchor {
+	position: relative;
 }
 
 .chordsify-chord {
-	font-family: @chordFont;
-	font-size: 0.75em;
-	line-height: 1em;
-	padding: 0.5em 0 0.1em;
-	top: 0;
-}
-
-.chordsify-chord-inner {
 	display: inline-block;
-	font-weight: normal;
-	text-shadow: none;
+	font-size: 0.8em;
+	line-height: 1em;
+	position: absolute;
+	top: -1.5em;
+	white-space: pre;
 }
 
-@media only screen and (min-width: 35em) {
-	.chordsify {
-		font-size: 20px;
+.chordsify-word {
+	display: inline-block;
+	white-space: pre;
+}
+
+.chordsify-gap {
+	display: inline-block;
+	height: 0.5ex;
+	margin: 0 0.125em;
+}
+
+.chordsify-gap-dash {
+	border-top: 1px dashed #666;
+}
+
+@media print {
+	.chordsify-lyrics {
+		font-family: @lyricsFontPrint;
+	}
+
+	.chordsify-chord {
+		font-family: @chordFontPrint;
+		font-size: 7.5pt;
+		font-weight: bold;
+		padding: 0.25em 0.3em;
 	}
 }
 
 @media only screen {
-	.chordsify-chord-inner {
-		background: @chordBackground;
-		border-radius: 0.4em;
-		color: @chordText;
-		margin-right: 0.4em;
-		padding: 0.2em 0.4em 0.2em;
+	.chordsify-lyrics {
+		font-family: @lyricsFont;
+	}
 
+	.chordsify-chord {
+		background: @chordBackground;
+		border-radius: 0.35em;
+		color: @chordText;
+		font-family: @chordFont;
+		padding: 0.25em 0.3em;
+		
 		&[data-chord="0"]  { background: #a33; }
 		&[data-chord="1"]  { background: #b93; }
 		&[data-chord="2"]  { background: #3a3; }
@@ -61,81 +96,6 @@
 		&[data-chord="11"] { background: #a36; }
 	}
 
-}
-
-.chordsify-line, .chordsify-chord {
-	display: block;
-}
-
-.chordsify-phrase, .chordsify-lyrics {
-	display: inline-block;
-}
-
-.chordsify-phrase {
-	font-size: 1em;
-	vertical-align: bottom;
-
-	&.chordsify-phrase-cond {
-		background: @lyricsBackground url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAABCAYAAAD9yd/wAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyFpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNS1jMDE0IDc5LjE1MTQ4MSwgMjAxMy8wMy8xMy0xMjowOToxNSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIChXaW5kb3dzKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpCMTZBMzE4RDUzM0ExMUUzOEM5NEE0N0I1RjM4QTM4NiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpCMTZBMzE4RTUzM0ExMUUzOEM5NEE0N0I1RjM4QTM4NiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkIxNkEzMThCNTMzQTExRTM4Qzk0QTQ3QjVGMzhBMzg2IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkIxNkEzMThDNTMzQTExRTM4Qzk0QTQ3QjVGMzhBMzg2Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+7BjgCwAAABdJREFUeNpi+P//PwMIA8F/GAbxAQIMAKF3C/Uq8GUxAAAAAElFTkSuQmCC) repeat-x right 80%;
-		
-		.chordsify-lyrics {
-			background: @lyricsBackground;
-		}
-	}
-}
-
-.chordsify-lyrics {
-	white-space: pre;
-	font-family: @lyricsFont;
-}
-
-.chordsify-block {
-	&[data-block-type="chorus"], &[data-block-type="bridge"] {
-		padding-left: 2em;
-	}
-
-	&[data-block-type="chorus"] {
-		.chordsify-line:first-child {
-			.chordsify-phrase:first-child {
-				.chordsify-lyrics {
-					&:before {
-						content: '*';
-						display: inline-block;
-						font-size: 1.5em;
-						color: #999;
-						position: relative;
-						width: 0;
-						line-height: 0;
-						top: 0.3em;
-						left: -0.7em;
-					}
-				}
-			}
-		}
-	}
-}
-
-@media print {
-	.chordsify-chords {
-		font-size: 10pt;
-	}
-
-	.chordsify-lyrics {
-		font-family: @lyricsFontPrint;
-	}
-
-	.chordsify-chord {
-		font-family: @chordFontPrint;
-		font-size: 7.5pt;
-		padding: 0.35em 0 0;
-	}
-
-	.chordsify-chord-inner {
-		font-weight: bold;
-		position: relative;
-		top: 2pt;
-		padding: 0 0.2em;
-	}
 }
 
 /* /Chordsify */
