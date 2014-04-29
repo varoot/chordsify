@@ -38,10 +38,7 @@
     if (key == null) {
       return null;
     }
-    if (typeof key === "number") {
-      return key % 12;
-    }
-    if (!isNaN(parseInt(key))) {
+    if (typeof key === "number" || isNaN(parseInt(key))) {
       return +key % 12;
     }
     key = key.trim();
@@ -119,18 +116,21 @@
       if ((blockType != null) !== "") {
         result += "[" + blockType + ((blockNum != null) > 0 ? " " + blockNum : "") + "]\n";
       }
-      return $block.find("." + opts.classes.line).each(function(j, line) {
-        $(line).find("." + opts.classes.lyrics + ", ." + opts.classes.chord).each(function(k, phrase) {
-          var $phrase, chordText;
-          $phrase = $(phrase);
-          if ($phrase.hasClass(opts.classes.chord)) {
-            chordText = restoreFlatSharp($phrase.text(), opts.chars);
-            if ((chordText != null) !== "") {
-              return result += "[" + chordText + "]";
+      return $block.children("." + opts.classes.paragraph).each(function(j, p) {
+        $(p).children("." + opts.classes.line).each(function(k, line) {
+          $(line).find("." + opts.classes.lyrics + ", ." + opts.classes.chord).each(function(l, phrase) {
+            var $phrase, chordText;
+            $phrase = $(phrase);
+            if ($phrase.hasClass(opts.classes.chord)) {
+              chordText = restoreFlatSharp($phrase.text(), opts.chars);
+              if ((chordText != null) !== "") {
+                return result += "[" + chordText + "]";
+              }
+            } else {
+              return result += $phrase.text();
             }
-          } else {
-            return result += $phrase.text();
-          }
+          });
+          return result += "\n";
         });
         return result += "\n";
       });

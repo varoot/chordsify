@@ -32,8 +32,7 @@
 	# Returns a numeric key (0-12)
 	keyNumber = (key) ->
 		return null  unless key?
-		return key % 12  if typeof key is "number"
-		return +key % 12  unless isNaN(parseInt(key))
+		return +key % 12  if typeof key is "number" or isNaN(parseInt(key))
 		
 		# Else, assume a string
 		key = key.trim()
@@ -108,14 +107,16 @@
 			blockType = $block.attr(opts.dataAttr.blockType)
 			blockNum = $block.attr(opts.dataAttr.blockNum)
 			result += "[" + blockType + (if blockNum? > 0 then " " + blockNum else "") + "]\n"  if blockType? isnt ""
-			$block.find("." + opts.classes.line).each (j, line) ->
-				$(line).find("." + opts.classes.lyrics + ", ." + opts.classes.chord).each (k, phrase) ->
-					$phrase = $(phrase)
-					if $phrase.hasClass(opts.classes.chord)
-						chordText = restoreFlatSharp($phrase.text(), opts.chars)
-						result += "[" + chordText + "]"  if chordText? isnt ""
-					else
-						result += $phrase.text()
+			$block.children("." + opts.classes.paragraph).each (j, p) ->
+				$(p).children("." + opts.classes.line).each (k, line) ->
+					$(line).find("." + opts.classes.lyrics + ", ." + opts.classes.chord).each (l, phrase) ->
+						$phrase = $(phrase)
+						if $phrase.hasClass(opts.classes.chord)
+							chordText = restoreFlatSharp($phrase.text(), opts.chars)
+							result += "[" + chordText + "]"  if chordText? isnt ""
+						else
+							result += $phrase.text()
+					result += "\n"
 				result += "\n"
 		return result
 
