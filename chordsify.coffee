@@ -32,7 +32,7 @@
 	# Returns a numeric key (0-12)
 	keyNumber = (key) ->
 		return null  unless key?
-		return +key % 12  if typeof key is "number" or isNaN(parseInt(key))
+		return +key % 12  if typeof key is "number" or not isNaN(parseInt(key))
 		
 		# Else, assume a string
 		key = key.trim()

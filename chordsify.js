@@ -38,7 +38,7 @@
     if (key == null) {
       return null;
     }
-    if (typeof key === "number" || isNaN(parseInt(key))) {
+    if (typeof key === "number" || !isNaN(parseInt(key))) {
       return +key % 12;
     }
     key = key.trim();
