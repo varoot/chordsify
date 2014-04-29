@@ -1,23 +1,20 @@
 /* Chordsify */
 @chordBackground: #666;
 @chordText: #fff;
-@lyricsBackground: #f9f9f9;
 
 @lyricsFont: inherit;
 @chordFont: @lyricsFont;
-@lyricsFontPrint: "Times New Roman", Times, serif;
+@lyricsFontPrint: "Adobe Garamond Pro", Garamond, Times, serif;
 @chordFontPrint: "Helvetica Neue", Helvetica, Arial, sans-serif;
 
 body {
+	background: #fefefe;
+	color: #222;
 	font-family: Arial;
 	transition: all 1s;
-	@media only screen and (min-width: 5px) {
-		font-size: 16px;
+	@media only screen and (min-width: 720px) {
+		font-size: 20px;
 	}
-}
-
-.chordsify {
-	padding-top: 1em;
 }
 
 .chordsify-raw {
@@ -26,7 +23,80 @@ body {
 }
 
 .chordsify-block {
-	line-height: 2.5em;
+	position: relative;
+
+	&[data-block-type="bridge"] {
+		padding-left: 1.5em;
+	}
+
+	&[data-block-type="chorus"] {
+		padding-left: 1.5em;
+
+		.chordsify-paragraph:first-child:before {
+			color: #999;
+			content: '*';
+			font-size: 150%;
+			position: absolute;
+			left: .25em;
+			top: .35em;
+			
+			@media print {
+				color: #ccc;
+				top: .52em;
+			}
+		}
+	}
+}
+
+.chordsify-block {
+	@media only screen and (min-width: 720px) {
+		border-left: .25em solid transparent;
+		padding-left: 1.5em;
+
+		&[data-block-type="bridge"] {
+			padding-left: 3em;
+		}
+
+		&[data-block-type="chorus"] {
+			padding-left: 3em;
+
+			.chordsify-paragraph:first-child:before {
+				left: 1.25em;
+			}
+		}
+
+		&:hover {
+			border-left-color: #ddd;
+
+			&:before {
+				color: #999;
+				content: attr(data-block-type) " " attr(data-block-num);
+				font-size: .6em;
+				position: absolute;
+				left: .25em;
+				top: .5em;
+				letter-spacing: 1px;
+				text-transform: uppercase;
+				-webkit-transform: rotate(-90deg) translate(-100%, 0);
+				-webkit-transform-origin: left top;
+			}
+		}
+	}
+}
+
+.chordsify-paragraph {
+	line-height: 2.5;
+	padding: .75em 0 .5em;
+}
+
+.chordsify-no-chords {
+	line-height: 1.5;	
+	padding: .5em 0 .75em;
+}
+
+.chordsify-lyrics {
+	font-feature-settings: "liga";
+	text-rendering: optimizeLegibility;
 }
 
 .chordsify-chord-anchor {
@@ -35,8 +105,8 @@ body {
 
 .chordsify-chord {
 	display: inline-block;
-	font-size: 0.8em;
-	line-height: 1em;
+	font-size: .75em;
+	line-height: 1;
 	position: absolute;
 	top: -1.5em;
 	white-space: pre;
@@ -49,24 +119,48 @@ body {
 
 .chordsify-gap {
 	display: inline-block;
-	height: 0.5ex;
-	margin: 0 0.125em;
+	height: .5ex;
+	margin: 0 .1em;
 }
 
 .chordsify-gap-dash {
 	border-top: 1px dashed #666;
+
+	@media print {
+		border-top: .75pt dashed #000;
+	}
 }
 
 @media print {
+	body {
+		color: #000;
+	}
+
 	.chordsify-lyrics {
 		font-family: @lyricsFontPrint;
+		font-size: 11pt;
 	}
 
 	.chordsify-chord {
 		font-family: @chordFontPrint;
 		font-size: 7.5pt;
 		font-weight: bold;
-		padding: 0.25em 0.3em;
+		top: -.5em;
+	}
+
+	.chordsify-paragraph {
+		line-height: 1.5;
+		padding: .75em 0 .25em;
+	}
+
+	.chordsify-no-chords {
+		line-height: 1;
+		padding: .5em 0 .25em;
+	}
+
+	.chordsify-gap {
+		height: .35ex;
+		margin: 0 .05em;
 	}
 }
 
@@ -77,10 +171,10 @@ body {
 
 	.chordsify-chord {
 		background: @chordBackground;
-		border-radius: 0.35em;
+		border-radius: .35em;
 		color: @chordText;
 		font-family: @chordFont;
-		padding: 0.25em 0.3em;
+		padding: .2em .4em;
 		
 		&[data-chord="0"]  { background: #a33; }
 		&[data-chord="1"]  { background: #b93; }

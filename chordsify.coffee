@@ -18,6 +18,7 @@
 		"Bb": 10, "B" : 11
 
 	chordsRegEx = new RegExp((key for key of keyMap).join('|'), 'g');
+	chordMargin = 2
 
 	#
 	# Helper functions
@@ -41,6 +42,7 @@
 		key = key.slice(0, 1).toUpperCase() + key.slice(1)
 		keyMap[key]
 
+	# Calculate key number relative to the original key
 	relativeKey = (key, originalKey) ->
 		originalKey = keyNumber(originalKey)
 		key = keyNumber(key)
@@ -54,6 +56,10 @@
 	restoreFlatSharp = (text, chars) ->
 		return null  unless text?
 		text.replace(chars.flat, "b").replace(chars.sharp, "#")
+
+	makeElement = (type, opts) ->
+		$(opts.elements[type])
+			.addClass opts.classes[type]
 
 	makeChordElement = (chordText, key, opts) ->
 		$result = $("<div>")
@@ -91,10 +97,9 @@
 
 	Chords::option = (opts) ->
 		@options = $.extend(@options, opts)
-		this
+		return this
 
 	Chords::text = ->
-		self = this
 		element = $(@element)
 		opts = @options
 		result = ""
@@ -147,8 +152,7 @@
 					offs = $phrase.offset()
 					if offs.top is lastChordTop and offs.left < lastChordRight
 						# expand gap
-						$gap = $(opts.elements.gap)
-							.addClass opts.classes.gap
+						$gap = makeElement('gap', opts)
 						if lastGapDash
 							# check next lyrics
 							nextLyrics = $phrase.parent().next()
@@ -160,7 +164,7 @@
 						offs = $phrase.offset()
 
 					lastChordTop = offs.top
-					lastChordRight = offs.left + $phrase.outerWidth()
+					lastChordRight = offs.left + $phrase.outerWidth() + chordMargin
 					$lastGapPos = null
 				else
 					lyrics = $phrase.text()
@@ -171,7 +175,6 @@
 		return this
 
 	Chords::init = (key, text) ->
-		self = this
 		$element = $(@element)
 		opts = @options
 		
@@ -181,16 +184,22 @@
 		
 		$element.html("").removeClass opts.classes.raw
 
-		$block = $(opts.elements.block).addClass(opts.classes.block).appendTo($element)
+		$block = makeElement('block', opts)
+			.appendTo $element
+
+		$paragraph = makeElement('paragraph', opts)
+			.appendTo $block
+
 		$.each text.trim().split("\n"), (i, lineText) ->
 			lineText = lineText.trim()
 
 			matches = lineText.match(opts.blockRegEx)
 			if matches				
 				# Make a new block (unless the current block is empty)
-				$block = $(opts.elements.block)
-					.addClass opts.classes.block
+				$block = makeElement('block', opts)
 					.appendTo($element)  unless $block.text() is ""
+				$paragraph = makeElement('paragraph', opts) unless $paragraph.text() is ""
+				$paragraph.appendTo($block)
 				$block.attr opts.dataAttr.blockType, matches[1]
 				unless matches[2] is ""
 					$block.attr opts.dataAttr.blockNum, matches[2]
@@ -199,12 +208,13 @@
 				return # Done. Block header
 
 			# Add a new line to the block
-			$line = $(opts.elements.line)
-				.addClass opts.classes.line
-				.appendTo $block
 			if lineText is ""
-				$line.text " "
+				$paragraph = makeElement('paragraph', opts)
+					.appendTo($block)
 				return # Done. Empty line
+
+			$line = makeElement('line', opts)
+				.appendTo $paragraph
 
 			# Split each word by space
 			# but not the spaces within [chord brackets] <- that's why the RegEx is so ugly
@@ -232,16 +242,15 @@
 					# add space to force the layout
 					$word.append ' '
 
-		$element.find '.' + opts.classes.block
-			.each (i, block) ->
-				$block = $(block)
-				$chords = $block.find '.' + opts.classes.chord
-				$block.addClass(opts.classes.blockNoChords)  if $chords.length is 0
+		$element.find '.' + opts.classes.paragraph
+			.each (i, p) ->
+				$p = $(p)
+				$chords = $p.find '.' + opts.classes.chord
+				$p.addClass(opts.classes.noChords)  if $chords.length is 0
 		
 		@position()
 
 	Chords::transpose = (key) ->
-		self = this
 		$element = $(@element)
 		opts = @options
 		key = keyNumber(key)
@@ -258,9 +267,8 @@
 			$chordTag.text chordKeys[chord]
 			$chordInner = $chordTag.parent()
 			$chordInner.attr opts.dataAttr.chord, chord  unless $chordInner.attr(opts.dataAttr.chord)?
-			return
 
-		return
+		return this
 
 	$.fn.chordsify = (options, param) ->
 		if typeof (options) is "string"
@@ -297,39 +305,41 @@
 		blockRegEx: /^\[\s*(verse|prechorus|chorus|bridge|tag)\s*(\d*)\s*\]$/i
 
 		chars:
-			flat: "♭"
+			flat:  "♭"
 			sharp: "♯"
 
 		classes:
-			block: "chordsify-block"
-			blockNoChords: "chordsify-block-no-chords"
-			chord: "chordsify-chord"
-			chordAnchor: "chordsify-chord-anchor"
-			chordInner: "chordsify-chord-inner"
-			gap: "chordsify-gap"
-			gapDash: "chordsify-gap-dash"
-			line: "chordsify-line"
-			lyrics: "chordsify-lyrics"
-			word: "chordsify-word"
-			raw: "chordsify-raw"
+			block:        "chordsify-block"
+			chord:        "chordsify-chord"
+			chordAnchor:  "chordsify-chord-anchor"
+			chordInner:   "chordsify-chord-inner"
+			gap:          "chordsify-gap"
+			gapDash:      "chordsify-gap-dash"
+			line:         "chordsify-line"
+			lyrics:       "chordsify-lyrics"
+			noChords:     "chordsify-no-chords"
+			paragraph:    "chordsify-paragraph"
+			word:         "chordsify-word"
+			raw:          "chordsify-raw"
 
 		dataAttr:
-			blockType: "data-block-type"
-			blockNum: "data-block-num"
-			chord: "data-chord"
-			chordRel: "data-chord-rel"
-			originalKey: "data-original-key"
+			blockType:    "data-block-type"
+			blockNum:     "data-block-num"
+			chord:        "data-chord"
+			chordRel:     "data-chord-rel"
+			originalKey:  "data-original-key"
 			transposeKey: "data-transpose-to"
 
 		elements:
-			block:       "<div>"
-			chord:       "<sup>"
-			chordAnchor: "<span>"
-			chordInner:  "<span>"
-			gap:         "<span>"
-			line:        "<div>"
-			lyrics:      "<span>"
-			word:        "<span>"
+			block:        "<div>"
+			chord:        "<sup>"
+			chordAnchor:  "<span>"
+			chordInner:   "<span>"
+			gap:          "<span>"
+			line:         "<div>"
+			lyrics:       "<span>"
+			paragraph:    "<div>"
+			word:         "<span>"
 
 	return
 ) jQuery
