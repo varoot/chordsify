@@ -158,6 +158,7 @@
     lastChordTop = 0;
     $lastGapPos = null;
     lastGapDash = false;
+    $element.find('.' + opts.classes.gap).remove();
     $element.find('.' + opts.classes.lyrics + ', .' + opts.classes.chord).each(function(i, phrase) {
       var $gap, $phrase, lyrics, nextLyrics, offs;
       $phrase = $(phrase);

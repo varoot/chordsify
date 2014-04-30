@@ -2,19 +2,23 @@
 @chordBackground: #666;
 @chordText: #fff;
 
-@lyricsFont: inherit;
-@chordFont: @lyricsFont;
-@lyricsFontPrint: "Adobe Garamond Pro", Garamond, Times, serif;
-@chordFontPrint: "Helvetica Neue", Helvetica, Arial, sans-serif;
+@lyricsFont: "PT Serif", Garamond, Times, serif;
+@chordFont: "PT Sans", Helvetica, Arial, sans-serif;
+@lyricsFontPrint: @lyricsFont;
+@chordFontPrint: @chordFont;
 
 body {
 	background: #fefefe;
 	color: #222;
-	font-family: Arial;
+	font-family: "PT Sans", Helvetica, Arial, sans-serif;
 	transition: all 1s;
 	@media only screen and (min-width: 720px) {
 		font-size: 20px;
 	}
+}
+
+.chordsify {
+	font-family: @lyricsFont;
 }
 
 .chordsify-raw {
@@ -34,15 +38,17 @@ body {
 
 		.chordsify-paragraph:first-child:before {
 			color: #999;
-			content: '*';
-			font-size: 150%;
+			content: "\2217";
 			position: absolute;
-			left: .25em;
-			top: .35em;
+			left: .35em;
+			top: .75em;
 			
 			@media print {
 				color: #ccc;
-				top: .52em;
+			}
+
+			@media only screen and (min-width: 720px) {
+				left: 1.85em;
 			}
 		}
 	}
@@ -59,10 +65,6 @@ body {
 
 		&[data-block-type="chorus"] {
 			padding-left: 3em;
-
-			.chordsify-paragraph:first-child:before {
-				left: 1.25em;
-			}
 		}
 
 		&:hover {
@@ -106,6 +108,7 @@ body {
 .chordsify-chord {
 	display: inline-block;
 	font-size: .75em;
+	font-weight: bold;
 	line-height: 1;
 	position: absolute;
 	top: -1.5em;
@@ -138,14 +141,14 @@ body {
 
 	.chordsify-lyrics {
 		font-family: @lyricsFontPrint;
-		font-size: 11pt;
+		font-size: 10pt;
 	}
 
 	.chordsify-chord {
 		font-family: @chordFontPrint;
 		font-size: 7.5pt;
 		font-weight: bold;
-		top: -.5em;
+		top: -.35em;
 	}
 
 	.chordsify-paragraph {
@@ -165,10 +168,6 @@ body {
 }
 
 @media only screen {
-	.chordsify-lyrics {
-		font-family: @lyricsFont;
-	}
-
 	.chordsify-chord {
 		background: @chordBackground;
 		border-radius: .35em;

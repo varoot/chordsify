@@ -146,6 +146,9 @@
 		$lastGapPos = null
 		lastGapDash = false
 
+		$element.find '.' + opts.classes.gap
+			.remove()
+
 		$element.find '.' + opts.classes.lyrics + ', .' + opts.classes.chord
 			.each (i, phrase) ->
 				$phrase = $(phrase)

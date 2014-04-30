@@ -3,6 +3,8 @@
 <head>
 	<meta charset="utf-8">
 	<title>Chordsify Demo</title>
+	<link href="//fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+	<link href="//fonts.googleapis.com/css?family=PT+Serif:400,700" rel="stylesheet" type="text/css">
 	<link rel="stylesheet/less" type="text/css" href="chordsify.less">
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/less.js/1.6.1/less.min.js"></script>
@@ -49,7 +51,8 @@
 	</div>
 	<script src="chordsify.js"></script>
 	<script>
-		$(function() {
+		// Wait for web fonts to load
+		$(window).bind('load', function() {
 			$('.chordsify').chordsify();
 		});
 	</script>
