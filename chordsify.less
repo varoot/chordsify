@@ -26,14 +26,14 @@ body {
 	white-space: pre-line;
 }
 
-.chordsify-block {
+.chordsify-section {
 	position: relative;
 
-	&[data-block-type="bridge"] {
+	&[data-section-type="bridge"] {
 		padding-left: 1.5em;
 	}
 
-	&[data-block-type="chorus"] {
+	&[data-section-type="chorus"] {
 		padding-left: 1.5em;
 
 		.chordsify-paragraph:first-child:before {
@@ -54,16 +54,16 @@ body {
 	}
 }
 
-.chordsify-block {
+.chordsify-section {
 	@media only screen and (min-width: 720px) {
 		border-left: .25em solid transparent;
 		padding-left: 1.5em;
 
-		&[data-block-type="bridge"] {
+		&[data-section-type="bridge"] {
 			padding-left: 3em;
 		}
 
-		&[data-block-type="chorus"] {
+		&[data-section-type="chorus"] {
 			padding-left: 3em;
 		}
 
@@ -72,7 +72,7 @@ body {
 
 			&:before {
 				color: #999;
-				content: attr(data-block-type) " " attr(data-block-num);
+				content: attr(data-section-type) " " attr(data-section-num);
 				font-family: @chordFont;
 				font-size: .6em;
 				position: absolute;

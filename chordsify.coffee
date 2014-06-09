@@ -66,13 +66,13 @@
 
 		chordText = chordText.replace chordsRegEx, (chord) ->
 			$wrapper = $("<div>")
-			$chordInner = $(opts.elements.chordInner)
-				.addClass opts.classes.chordInner
+			$chordRoot = $(opts.elements.chordRoot)
+				.addClass opts.classes.chordRoot
 				.text replaceFlatSharp(chord, opts.chars)
 				.appendTo $wrapper
 			rootChord = keyNumber(chord)  unless rootChord?
 			relativeChord = relativeKey(chord, key)
-			$chordInner.attr(opts.dataAttr.chordRel, relativeChord)  if relativeChord?
+			$chordRoot.attr(opts.dataAttr.chordRel, relativeChord)  if relativeChord?
 			$wrapper.html()
 
 		$chordTag = $(opts.elements.chord)
@@ -102,12 +102,12 @@
 		element = $(@element)
 		opts = @options
 		result = ""
-		element.find("." + opts.classes.block).each (i, block) ->
-			$block = $(block)
-			blockType = $block.attr(opts.dataAttr.blockType)
-			blockNum = $block.attr(opts.dataAttr.blockNum)
-			result += "[" + blockType + (if blockNum? > 0 then " " + blockNum else "") + "]\n"  if blockType? isnt ""
-			$block.children("." + opts.classes.paragraph).each (j, p) ->
+		element.find("." + opts.classes.section).each (i, section) ->
+			$section = $(section)
+			sectionType = $section.attr(opts.dataAttr.sectionType)
+			sectionNum = $section.attr(opts.dataAttr.sectionNum)
+			result += "[" + sectionType + (if sectionNum? > 0 then " " + sectionNum else "") + "]\n"  if sectionType? isnt ""
+			$section.children("." + opts.classes.paragraph).each (j, p) ->
 				$(p).children("." + opts.classes.line).each (k, line) ->
 					$(line).find("." + opts.classes.lyrics + ", ." + opts.classes.chord).each (l, phrase) ->
 						$phrase = $(phrase)
@@ -188,33 +188,33 @@
 		
 		$element.html("").removeClass opts.classes.raw
 
-		$block = makeElement('block', opts)
+		$section = makeElement('section', opts)
 			.appendTo $element
 
 		$paragraph = makeElement('paragraph', opts)
-			.appendTo $block
+			.appendTo $section
 
 		$.each text.trim().split("\n"), (i, lineText) ->
 			lineText = lineText.trim()
 
-			matches = lineText.match(opts.blockRegEx)
+			matches = lineText.match(opts.sectionRegEx)
 			if matches				
-				# Make a new block (unless the current block is empty)
-				$block = makeElement('block', opts)
-					.appendTo($element)  unless $block.text() is ""
+				# Make a new section (unless the current section is empty)
+				$section = makeElement('section', opts)
+					.appendTo($element)  unless $section.text() is ""
 				$paragraph = makeElement('paragraph', opts) unless $paragraph.text() is ""
-				$paragraph.appendTo($block)
-				$block.attr opts.dataAttr.blockType, matches[1]
+				$paragraph.appendTo($section)
+				$section.attr opts.dataAttr.sectionType, matches[1]
 				unless matches[2] is ""
-					$block.attr opts.dataAttr.blockNum, matches[2]
+					$section.attr opts.dataAttr.sectionNum, matches[2]
 				else
-					$block.removeAttr opts.dataAttr.blockNum
-				return # Done. Block header
+					$section.removeAttr opts.dataAttr.sectionNum
+				return # Done. section header
 
-			# Add a new line to the block
+			# Add a new line to the section
 			if lineText is ""
 				$paragraph = makeElement('paragraph', opts)
-					.appendTo($block)
+					.appendTo($section)
 				return # Done. Empty line
 
 			$line = makeElement('line', opts)
@@ -269,8 +269,8 @@
 			chordRel = +$chordTag.attr(opts.dataAttr.chordRel)
 			chord = (chordRel + key) % 12
 			$chordTag.text chordKeys[chord]
-			$chordInner = $chordTag.parent()
-			$chordInner.attr opts.dataAttr.chord, chord  unless $chordInner.attr(opts.dataAttr.chord)?
+			$chordRoot = $chordTag.parent()
+			$chordRoot.attr opts.dataAttr.chord, chord  unless $chordRoot.attr(opts.dataAttr.chord)?
 
 		return this
 
@@ -305,18 +305,18 @@
 			$(e).data "chordsify", new Chords(e, opts)
 
 	$.fn.chordsify.defaults =
-		# Block only supports "verse", "prechorus", "chorus", "bridge", and "tag"
-		blockRegEx: /^\[\s*(verse|prechorus|chorus|bridge|tag)\s*(\d*)\s*\]$/i
+		# section only supports "verse", "prechorus", "chorus", "bridge", and "tag"
+		sectionRegEx: /^\[\s*(verse|prechorus|chorus|bridge|tag)\s*(\d*)\s*\]$/i
 
 		chars:
 			flat:  "♭"
 			sharp: "♯"
 
 		classes:
-			block:        "chordsify-block"
+			section:      "chordsify-section"
 			chord:        "chordsify-chord"
 			chordAnchor:  "chordsify-chord-anchor"
-			chordInner:   "chordsify-chord-inner"
+			chordRoot:    "chordsify-chord-root"
 			gap:          "chordsify-gap"
 			gapDash:      "chordsify-gap-dash"
 			line:         "chordsify-line"
@@ -327,18 +327,18 @@
 			raw:          "chordsify-raw"
 
 		dataAttr:
-			blockType:    "data-block-type"
-			blockNum:     "data-block-num"
+			sectionType:  "data-section-type"
+			sectionNum:   "data-section-num"
 			chord:        "data-chord"
 			chordRel:     "data-chord-rel"
 			originalKey:  "data-original-key"
 			transposeKey: "data-transpose-to"
 
 		elements:
-			block:        "<div>"
+			section:      "<div>"
 			chord:        "<sup>"
 			chordAnchor:  "<span>"
-			chordInner:   "<span>"
+			chordRoot:    "<span>"
 			gap:          "<span>"
 			line:         "<div>"
 			lyrics:       "<span>"

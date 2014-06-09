@@ -73,15 +73,15 @@
     $result = $("<div>");
     rootChord = null;
     chordText = chordText.replace(chordsRegEx, function(chord) {
-      var $chordInner, $wrapper, relativeChord;
+      var $chordRoot, $wrapper, relativeChord;
       $wrapper = $("<div>");
-      $chordInner = $(opts.elements.chordInner).addClass(opts.classes.chordInner).text(replaceFlatSharp(chord, opts.chars)).appendTo($wrapper);
+      $chordRoot = $(opts.elements.chordRoot).addClass(opts.classes.chordRoot).text(replaceFlatSharp(chord, opts.chars)).appendTo($wrapper);
       if (rootChord == null) {
         rootChord = keyNumber(chord);
       }
       relativeChord = relativeKey(chord, key);
       if (relativeChord != null) {
-        $chordInner.attr(opts.dataAttr.chordRel, relativeChord);
+        $chordRoot.attr(opts.dataAttr.chordRel, relativeChord);
       }
       return $wrapper.html();
     });
@@ -108,15 +108,15 @@
     element = $(this.element);
     opts = this.options;
     result = "";
-    element.find("." + opts.classes.block).each(function(i, block) {
-      var $block, blockNum, blockType;
-      $block = $(block);
-      blockType = $block.attr(opts.dataAttr.blockType);
-      blockNum = $block.attr(opts.dataAttr.blockNum);
-      if ((blockType != null) !== "") {
-        result += "[" + blockType + ((blockNum != null) > 0 ? " " + blockNum : "") + "]\n";
+    element.find("." + opts.classes.section).each(function(i, section) {
+      var $section, sectionNum, sectionType;
+      $section = $(section);
+      sectionType = $section.attr(opts.dataAttr.sectionType);
+      sectionNum = $section.attr(opts.dataAttr.sectionNum);
+      if ((sectionType != null) !== "") {
+        result += "[" + sectionType + ((sectionNum != null) > 0 ? " " + sectionNum : "") + "]\n";
       }
-      return $block.children("." + opts.classes.paragraph).each(function(j, p) {
+      return $section.children("." + opts.classes.paragraph).each(function(j, p) {
         $(p).children("." + opts.classes.line).each(function(k, line) {
           $(line).find("." + opts.classes.lyrics + ", ." + opts.classes.chord).each(function(l, phrase) {
             var $phrase, chordText;
@@ -193,37 +193,37 @@
     return this;
   };
   Chords.prototype.init = function(key, text) {
-    var $block, $element, $paragraph, opts;
+    var $element, $paragraph, $section, opts;
     $element = $(this.element);
     opts = this.options;
     key = keyNumber(key);
     this.key = key;
     this.originalKey = key;
     $element.html("").removeClass(opts.classes.raw);
-    $block = makeElement('block', opts).appendTo($element);
-    $paragraph = makeElement('paragraph', opts).appendTo($block);
+    $section = makeElement('section', opts).appendTo($element);
+    $paragraph = makeElement('paragraph', opts).appendTo($section);
     $.each(text.trim().split("\n"), function(i, lineText) {
       var $line, matches;
       lineText = lineText.trim();
-      matches = lineText.match(opts.blockRegEx);
+      matches = lineText.match(opts.sectionRegEx);
       if (matches) {
-        if ($block.text() !== "") {
-          $block = makeElement('block', opts).appendTo($element);
+        if ($section.text() !== "") {
+          $section = makeElement('section', opts).appendTo($element);
         }
         if ($paragraph.text() !== "") {
           $paragraph = makeElement('paragraph', opts);
         }
-        $paragraph.appendTo($block);
-        $block.attr(opts.dataAttr.blockType, matches[1]);
+        $paragraph.appendTo($section);
+        $section.attr(opts.dataAttr.sectionType, matches[1]);
         if (matches[2] !== "") {
-          $block.attr(opts.dataAttr.blockNum, matches[2]);
+          $section.attr(opts.dataAttr.sectionNum, matches[2]);
         } else {
-          $block.removeAttr(opts.dataAttr.blockNum);
+          $section.removeAttr(opts.dataAttr.sectionNum);
         }
         return;
       }
       if (lineText === "") {
-        $paragraph = makeElement('paragraph', opts).appendTo($block);
+        $paragraph = makeElement('paragraph', opts).appendTo($section);
         return;
       }
       $line = makeElement('line', opts).appendTo($paragraph);
@@ -274,14 +274,14 @@
     })();
     $element.find("[" + opts.dataAttr.chord + "]").removeAttr(opts.dataAttr.chord);
     $element.find("[" + opts.dataAttr.chordRel + "]").each(function(i, chordTag) {
-      var $chordInner, $chordTag, chord, chordRel;
+      var $chordRoot, $chordTag, chord, chordRel;
       $chordTag = $(chordTag);
       chordRel = +$chordTag.attr(opts.dataAttr.chordRel);
       chord = (chordRel + key) % 12;
       $chordTag.text(chordKeys[chord]);
-      $chordInner = $chordTag.parent();
-      if ($chordInner.attr(opts.dataAttr.chord) == null) {
-        return $chordInner.attr(opts.dataAttr.chord, chord);
+      $chordRoot = $chordTag.parent();
+      if ($chordRoot.attr(opts.dataAttr.chord) == null) {
+        return $chordRoot.attr(opts.dataAttr.chord, chord);
       }
     });
     return this;
@@ -322,16 +322,16 @@
     });
   };
   $.fn.chordsify.defaults = {
-    blockRegEx: /^\[\s*(verse|prechorus|chorus|bridge|tag)\s*(\d*)\s*\]$/i,
+    sectionRegEx: /^\[\s*(verse|prechorus|chorus|bridge|tag)\s*(\d*)\s*\]$/i,
     chars: {
       flat: "♭",
       sharp: "♯"
     },
     classes: {
-      block: "chordsify-block",
+      section: "chordsify-section",
       chord: "chordsify-chord",
       chordAnchor: "chordsify-chord-anchor",
-      chordInner: "chordsify-chord-inner",
+      chordRoot: "chordsify-chord-root",
       gap: "chordsify-gap",
       gapDash: "chordsify-gap-dash",
       line: "chordsify-line",
@@ -342,18 +342,18 @@
       raw: "chordsify-raw"
     },
     dataAttr: {
-      blockType: "data-block-type",
-      blockNum: "data-block-num",
+      sectionType: "data-section-type",
+      sectionNum: "data-section-num",
       chord: "data-chord",
       chordRel: "data-chord-rel",
       originalKey: "data-original-key",
       transposeKey: "data-transpose-to"
     },
     elements: {
-      block: "<div>",
+      section: "<div>",
       chord: "<sup>",
       chordAnchor: "<span>",
-      chordInner: "<span>",
+      chordRoot: "<span>",
       gap: "<span>",
       line: "<div>",
       lyrics: "<span>",
