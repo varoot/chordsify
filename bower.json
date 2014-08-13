@@ -1,0 +1,24 @@
+{
+  "name": "Chordsify.js",
+  "main": "chordsify.js",
+  "version": "0.2",
+  "homepage": "https://github.com/varoot/chordsify",
+  "authors": [
+    "Varoot Phasuthadol <varoot@gmail.com>"
+  ],
+  "description": "Display chords nicely with HTML5",
+  "keywords": [
+    "chords"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "demo.html"
+    "*.coffee",
+  ]
+}
