@@ -19,6 +19,5 @@
     "test",
     "tests",
     "demo.html"
-    "*.coffee",
   ]
 }
