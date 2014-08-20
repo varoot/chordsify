@@ -39,19 +39,27 @@
 	&[data-section-type="chorus"] {
 		padding-left: 1.5em;
 
-		.chordsify-paragraph:first-child:before {
-			color: #999;
-			content: "\2217";
-			position: absolute;
-			left: .35em;
-			top: .75em;
-			
-			@media print {
-				color: #ccc;
+		.chordsify-paragraph:first-child {
+			&:before {
+				color: #999;
+				content: "\2217";
+				position: absolute;
+				left: .35em;
+				top: .75em;
+
+				@media print {
+					color: #ccc;
+				}
+
+				@media only screen and (min-width: 720px) {
+					left: 1.85em;
+				}
 			}
 
-			@media only screen and (min-width: 720px) {
-				left: 1.85em;
+			&.chordsify-no-chords {
+				&:before {
+					top: .5em;
+				}
 			}
 		}
 	}
