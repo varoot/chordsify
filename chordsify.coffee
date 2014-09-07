@@ -163,7 +163,7 @@
 							if nextLyrics.hasClass(opts.classes.lyrics) and nextLyrics.text().slice(0, 1) isnt ' '
 								$gap.addClass(opts.classes.gapDash)
 						$lastGapPos = $phrase.parent().prev()  unless $lastGapPos?
-						$lastGapPos.after($gap)
+						$lastGapPos.append($gap)
 						$gap.width(lastChordRight - offs.left)
 						offs = $phrase.offset()
 
@@ -227,24 +227,28 @@
 					.addClass opts.classes.word
 					.appendTo $line
 
-				# Replace chord texts with chord elements
-				wordText = wordText.replace /\[([^\]]*)\]/g, (match, chordText) ->
-					$result = $("<div>")
-					$chordAnchor = $(opts.elements.chordAnchor)
-						.addClass opts.classes.chordAnchor
-						.html makeChordElement(chordText, key, opts)
-						.appendTo $result
-					$result.html()
+				# Split each chunk
+				$.each wordText.split('['), (k, chunkText) ->
+					return if chunkText is ''
 
-				$textNodes = $word.html(wordText)
-					.contents()
-					.filter () -> @nodeType is 3
-
-				if $textNodes.length > 0
-					$textNodes.wrap $(opts.elements.lyrics).addClass(opts.classes.lyrics)
-				else
-					# add space to force the layout
-					$word.append ' '
+					$chunk = $(opts.elements.chunk)
+						.addClass opts.classes.chunk
+						.appendTo $word
+					
+					if chunkText.indexOf(']') < 0
+						lyricsText = chunkText
+					else
+						[chordText, lyricsText] = chunkText.split(']')
+						$chordWrapper = $(opts.elements.chordWrapper)
+							.addClass opts.classes.chordWrapper
+							.html makeChordElement(chordText, key, opts)
+							.appendTo $chunk
+						lyricsText = ' ' if lyricsText is ''
+					
+					$lyrics = $(opts.elements.lyrics)
+						.addClass opts.classes.lyrics
+						.text lyricsText
+						.appendTo $chunk
 
 		$element.find '.' + opts.classes.paragraph
 			.each (i, p) ->
@@ -313,18 +317,19 @@
 			sharp: "♯"
 
 		classes:
+			raw:          "chordsify-raw"
 			section:      "chordsify-section"
+			paragraph:    "chordsify-paragraph"
+			noChords:     "chordsify-no-chords"
+			line:         "chordsify-line"
+			word:         "chordsify-word"
+			chunk:        "chordsify-chunk"
+			lyrics:       "chordsify-lyrics"
 			chord:        "chordsify-chord"
-			chordAnchor:  "chordsify-chord-anchor"
+			chordWrapper: "chordsify-chord-wrapper"
 			chordRoot:    "chordsify-chord-root"
 			gap:          "chordsify-gap"
 			gapDash:      "chordsify-gap-dash"
-			line:         "chordsify-line"
-			lyrics:       "chordsify-lyrics"
-			noChords:     "chordsify-no-chords"
-			paragraph:    "chordsify-paragraph"
-			word:         "chordsify-word"
-			raw:          "chordsify-raw"
 
 		dataAttr:
 			sectionType:  "data-section-type"
@@ -336,14 +341,15 @@
 
 		elements:
 			section:      "<div>"
+			paragraph:    "<div>"
+			line:         "<div>"
+			word:         "<span>"
+			chunk:        "<span>"
+			lyrics:       "<span>"
 			chord:        "<sup>"
-			chordAnchor:  "<span>"
+			chordWrapper: "<span>"
 			chordRoot:    "<span>"
 			gap:          "<span>"
-			line:         "<div>"
-			lyrics:       "<span>"
-			paragraph:    "<div>"
-			word:         "<span>"
 
 	return
 ) jQuery
