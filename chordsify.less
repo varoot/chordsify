@@ -109,14 +109,14 @@
 	padding: .75em 0 .5em;
 }
 
-.chordsify-no-chords {
+/*.chordsify-paragraph*/.chordsify-no-chords {
 	line-height: 1.5;	
 	padding: .5em 0 .75em;
 }
 
-.chordsify-lyrics {
-	font-feature-settings: "liga";
-	text-rendering: optimizeLegibility;
+.chordsify-word {
+	display: inline-block;
+	white-space: pre;
 }
 
 .chordsify-chord-anchor {
@@ -133,9 +133,9 @@
 	white-space: pre;
 }
 
-.chordsify-word {
-	display: inline-block;
-	white-space: pre;
+.chordsify-lyrics {
+	font-feature-settings: "liga";
+	text-rendering: optimizeLegibility;
 }
 
 .chordsify-gap {
@@ -157,6 +157,16 @@
 		color: #000;
 	}
 
+	.chordsify-paragraph {
+		line-height: 1.75;
+		padding: .75em 0 .25em;
+	}
+
+	.chordsify-no-chords {
+		line-height: 1.25;
+		padding: .5em 0 .25em;
+	}
+
 	.chordsify-lyrics {
 		font-family: @lyricsFontPrint;
 		font-size: 10pt;
@@ -167,16 +177,6 @@
 		font-size: 7.5pt;
 		font-weight: bold;
 		top: -.5em;
-	}
-
-	.chordsify-paragraph {
-		line-height: 1.75;
-		padding: .75em 0 .25em;
-	}
-
-	.chordsify-no-chords {
-		line-height: 1.25;
-		padding: .5em 0 .25em;
 	}
 
 	.chordsify-gap {
