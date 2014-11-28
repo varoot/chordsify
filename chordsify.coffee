@@ -305,8 +305,8 @@
 			$(e).data "chordsify", new Chords(e, opts)
 
 	$.fn.chordsify.defaults =
-		# section only supports "verse", "prechorus", "chorus", "bridge", and "tag"
-		sectionRegEx: /^\[\s*(verse|prechorus|chorus|bridge|tag)\s*(\d*)\s*\]$/i
+		# section only supports "intro", "verse", "prechorus", "chorus", "bridge", "tag", "outro"
+		sectionRegEx: /^\[\s*(intro|verse|prechorus|chorus|bridge|tag|outro)\s*(\d*)\s*\]$/i
 
 		chars:
 			flat:  "♭"

@@ -322,7 +322,7 @@
     });
   };
   $.fn.chordsify.defaults = {
-    sectionRegEx: /^\[\s*(verse|prechorus|chorus|bridge|tag)\s*(\d*)\s*\]$/i,
+    sectionRegEx: /^\[\s*(intro|verse|prechorus|chorus|bridge|tag|outro)\s*(\d*)\s*\]$/i,
     chars: {
       flat: "♭",
       sharp: "♯"
